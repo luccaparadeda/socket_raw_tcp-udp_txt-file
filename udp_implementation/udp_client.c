@@ -1,5 +1,5 @@
 /*
-    Simple UDP client to send a file
+    Simple UDP client
     usage: udpclient <server ip> <port> <filename>
 */
 #include <stdio.h>
@@ -9,7 +9,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-#define BUFLEN 512  // Max length of buffer
+#define BUFLEN 512 
 
 void die(const char *s)
 {
@@ -30,7 +30,6 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    // Create a UDP socket
     if ((s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
         die("socket");
 
@@ -41,12 +40,10 @@ int main(int argc, char **argv)
     if (inet_aton(argv[1], &si_other.sin_addr) == 0)
         die("inet_aton");
 
-    // Open the file
     file = fopen(argv[3], "rb");
     if (file == NULL)
         die("fopen");
 
-    // Send the file in chunks
     while ((nread = fread(buf, 1, BUFLEN, file)) > 0) {
         if (sendto(s, buf, nread, 0, (struct sockaddr *) &si_other, slen) == -1)
             die("sendto()");
